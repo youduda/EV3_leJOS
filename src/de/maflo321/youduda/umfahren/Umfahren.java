@@ -91,13 +91,41 @@ public class Umfahren {
 	}
 
 	/**
-	 * handle distance difference from -30 to 30 mm
+	 * move toward the aimed distance and forward
 	 */
-	private void traverseLine() {
-		double tmp = getAverageOffset(1);
-		if (tmp >= 0) {
-			chassis.arc(-200, Math.acos((1000.0 - tmp) / 1000.0) * 360.0 / (2.0 * Math.PI));
+	private void goAlong() {
+		// aim must be out of the arc
+		float nowDistance = getCurrentOffsetSigned();
+		float nowDist = getCurrentSigned();
+		float avgDist = getAverageOffsetSigned(10);
+		float highDist = getHighestOffsetSigned(10);
+
+		if (Math.abs(nowDist) > Math.abs(avgDist)) {
+			// Moving away from aim distance
+			if (nowDist > avgDist) {
+				// Moving away from aim distance and wall
+				headForPoint(-nowDistance, 200);
+			} else if (nowDist < avgDist) {
+				// Moving to the wall and is between aim distance and wall
+				headForPoint(-nowDistance, 200);
+			}
+		} else if (Math.abs(nowDist) < Math.abs(highDist)) {
+			// Moving to the aim distance
+			// Robot is in the right direction -> do nothing
+			if (nowDist > avgDist) {
+				// Moving to the aim distance and is between aim distance and
+				// wall
+				headForPoint(0, 200);
+			} else if (nowDist < avgDist) {
+				// Moving to the aim distance and is not between aim distance
+				// and wall
+				headForPoint(0, 200);
+			}
+		} else if (nowDist == avgDist) {
+			// Parallel to the aim
+			headForPoint(-nowDistance, 200);
 		}
+	}
 
 	/**
 	 * This method only heads for a point, it does not go there<br>
