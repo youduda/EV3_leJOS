@@ -98,14 +98,77 @@ public class Umfahren {
 		if (tmp >= 0) {
 			chassis.arc(-200, Math.acos((1000.0 - tmp) / 1000.0) * 360.0 / (2.0 * Math.PI));
 		}
-		if (tmp < 0) {
-			chassis.arc(200, Math.acos((1000.0 + tmp) / 1000.0) * 360.0 / (2.0 * Math.PI));
+
+	/**
+	 * This method only heads for a point, it does not go there<br>
+	 * yAxis shouldn't be to low to prevent the robot from heading for the wall
+	 * 
+	 * @param direction
+	 * @param xAxis
+	 *            x-coordinate of the point
+	 * @param yAxis
+	 *            y-coordinate of the point, should be much higher than radius
+	 */
+	private void headForPoint(double direction, double xAxis, double yAxis) {
+		double r = 100; // TODO: Check if aim is OUTSIDE of circle
+		xAxis = r + xAxis;
+		double yValue = yAxis;
+		double xValue = xAxis;
+
+		double x = 0;
+
+		double y1 = ((2 * Math.pow(r, 2) * yValue) / Math.pow(xValue, 2)
+				+ Math.sqrt(4 * Math.pow(r, 4) * Math.pow(yValue, 2) / Math.pow(xValue, 4)
+						- 4 * (1 + Math.pow(yValue, 2) / Math.pow(xValue, 2))
+								* (Math.pow(r, 4) / Math.pow(xValue, 2) - Math.pow(r, 2))))
+				/ (2 * (1 + Math.pow(yValue, 2) / Math.pow(xValue, 2)));
+		double y2 = ((2 * Math.pow(r, 2) * yValue) / Math.pow(xValue, 2)
+				- Math.sqrt(4 * Math.pow(r, 4) * Math.pow(yValue, 2) / Math.pow(xValue, 4)
+						- 4 * (1 + Math.pow(yValue, 2) / Math.pow(xValue, 2))
+								* (Math.pow(r, 4) / Math.pow(xValue, 2) - Math.pow(r, 2))))
+				/ (2 * (1 + Math.pow(yValue, 2) / Math.pow(xValue, 2)));
+
+		double x1 = Math.sqrt(Math.pow(r, 2) - Math.pow(y1, 2));
+		double x2 = Math.sqrt(Math.pow(r, 2) - Math.pow(y2, 2));
+
+		if (xAxis < 0) { // Interval: ]-infinite; 0[ and ]r;
+			if (yAxis >= r)
+				x = x1;
+			else
+				x = -x1;
+		} else if (xAxis <= r) { // Interval: [0; r]
+			if (yAxis >= -r)
+				x = x2;
+			else if (yAxis < -r)
+				x = -x2;
+		} else if (xAxis > r) {
+
+			xAxis = xAxis - r;
+			if (xAxis < 0) { // Interval: ]-infinite; 0[ and ]r;
+				if (yAxis >= -r)
+					x = -x2;
+				else
+					x = x2;
+			} else if (xAxis > 0) { // Interval: [0; r]
+				x = x1;
+			}
+			r = -r; // aim is on the robot's right side
 		}
+
+		double angle = 0;
+		if (r > 0) {
+			angle = Math.acos(x / Math.abs(r)) * 360.0 / (2.0 * Math.PI);
+			chassis.arc(-r, angle);
+		} else if (r < 0) {
+			angle = Math.acos(x / Math.abs(r)) * 360.0 / (2.0 * Math.PI);
+			chassis.arc(-r, angle);
+		} else if (r == x)
+			chassis.travel(20);
 	}
 
 	private void traverseArc() {
 		while (true) {
-			if (getHighestOffset(1) < distanceOffsetArc)
+			if (getHighestOffsetUnsigned(1) < distanceOffsetArc)
 				break;
 			// TODO: implement drive around edge
 		}
