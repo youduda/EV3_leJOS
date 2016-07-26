@@ -78,14 +78,14 @@ public class Umfahren {
 		chassis.setLinearSpeed(10);
 		Thread thread1 = new Thread(sensors);
 		thread1.start();
-
+		Delay.msDelay(1000);
 		while (true) {
 			if (getHighestOffset(1) < distanceOffsetArc)
 				traverseLine();
 
 			else if (getHighestOffset(1) >= distanceOffsetArc)
-				traverseArc();
-			Delay.msDelay(50);
+			goAlong();
+			Delay.msDelay(100);
 
 		}
 	}
