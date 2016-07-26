@@ -119,9 +119,11 @@ public class Umfahren {
 	 * 
 	 * @param count
 	 *            sets the number of values to calculate since now
-	 * @return average signed offset: average(distance_sensor - distance_aimed)
+	 * @return average signed offset: average(distance_sensor -
+	 *         distance_aimed)<br>
+	 *         positive return means to far away from the wall, negative to near
 	 */
-	private float getAverageOffset(int count) {
+	private float getAverageOffsetSigned(int count) {
 		float ret = 0;
 		float[] samples = sensors.getUltrasonicSamples();
 		if (count > samples.length)
@@ -139,17 +141,54 @@ public class Umfahren {
 	 * 
 	 * @param count
 	 *            sets the number of values to compare since now
-	 * @return absolute highest offset from the aim distance
+	 * @return absolute highest offset from the aim distance unsigned
 	 */
-	private float getHighestOffset(int count) {
+	private float getHighestOffsetUnsigned(int count) {
+		return getHighestOffsetSigned(count);
+	}
+
+	/**
+	 * reads the last values from SensorHandler and gets the highest difference
+	 * between the aimed distance and the distance in the last n values <br>
+	 * highest(distance_sensor - distance_aimed)
+	 * 
+	 * @param count
+	 *            sets the number of values to compare since now
+	 * @return absolute highest offset from the aim distance signed<br>
+	 *         positive return means to far away from the wall, negative to near
+	 */
+	private float getHighestOffsetSigned(int count) {
 		float ret = 0;
 		float[] samples = sensors.getUltrasonicSamples();
 		if (count > samples.length)
 			throw new IllegalArgumentException("Invalid count " + count);
 
 		for (int i = 0; i < count; i++)
-			if (Math.abs(distance - samples[i]) > ret)
-				ret = Math.abs(distance - samples[i]);
+			if (Math.abs(samples[i] - distance) > Math.abs(ret))
+				ret = samples[i] - distance;
 		return ret;
+	}
+
+	/**
+	 * reads the last values from SensorHandler and gets the last one. The
+	 * difference between the aimed distance and the distance in the last value
+	 * is returned.<br>
+	 * current(distance_sensor - distance_aimed)
+	 * 
+	 * @return last offset from the aim distance signed<br>
+	 *         positive return means to far away from the wall, negative to near
+	 */
+	private float getCurrentOffsetSigned() {
+		float[] samples = sensors.getUltrasonicSamples();
+		if (samples.length <= 0)
+			throw new NegativeArraySizeException("Invalid array size " + samples.length);
+		return samples[0] - distance;
+	}
+
+	private float getCurrentSigned() {
+		float[] samples = sensors.getUltrasonicSamples();
+		if (samples.length <= 0)
+			throw new NegativeArraySizeException("Invalid array size " + samples.length);
+		return samples[0];
 	}
 }
