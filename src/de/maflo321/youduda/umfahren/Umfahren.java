@@ -194,14 +194,6 @@ public class Umfahren {
 			chassis.travel(20);
 	}
 
-	private void traverseArc() {
-		while (true) {
-			if (getHighestOffsetUnsigned(1) < distanceOffsetArc)
-				break;
-			// TODO: implement drive around edge
-		}
-	}
-
 	/**
 	 * reads the last values from SensorHandler and returns the average
 	 * difference between the aimed distance and the distance in the last n
