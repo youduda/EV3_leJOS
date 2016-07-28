@@ -17,7 +17,6 @@ public class Umfahren {
 	lejos.robotics.chassis.WheeledChassis chassis;
 	SensorHandler sensors;
 	float distance;
-	float distanceOffsetArc;
 
 	/**
 	 * creates object to run the program
@@ -41,7 +40,6 @@ public class Umfahren {
 	 */
 	private int init() {
 		distance = 40; // distance from wall
-		distanceOffsetArc = 10; // offset from distance to start traversing arc
 
 		// only open devices once
 		// Configure wheels: 5.5 cm diameter and 6 cm offset off the center
@@ -80,10 +78,6 @@ public class Umfahren {
 		thread1.start();
 		Delay.msDelay(1000);
 		while (true) {
-			if (getHighestOffset(1) < distanceOffsetArc)
-				traverseLine();
-
-			else if (getHighestOffset(1) >= distanceOffsetArc)
 			goAlong();
 			Delay.msDelay(100);
 
@@ -131,7 +125,6 @@ public class Umfahren {
 	 * This method only heads for a point, it does not go there<br>
 	 * yAxis shouldn't be to low to prevent the robot from heading for the wall
 	 * 
-	 * @param direction
 	 * @param xAxis
 	 *            x-coordinate of the point
 	 * @param yAxis
