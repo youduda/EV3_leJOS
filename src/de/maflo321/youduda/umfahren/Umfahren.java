@@ -85,25 +85,31 @@ public class Umfahren {
 	}
 
 	/**
-	 * move toward the aimed distance and forward
+	 * move forward and toward the aimed distance depending on the distance
 	 */
 	private void goAlong() {
 		// aim must be out of the arc
-		float nowDistance = getCurrentOffsetSigned();
-		float nowDist = getCurrentSigned();
-		float avgDist = getAverageOffsetSigned(10);
-		float highDist = getHighestOffsetSigned(10);
+		double xAxis = getCurrentOffsetSigned();
+		double nowDist = getCurrentOffsetSigned();
+		double avgDist = getAverageOffsetSigned(10);
+		// float highDist = getHighestOffsetSigned(10);
+		// Average is used because highest will always be the latest or the last
+		// one of the values, but average is calculated with all values
+
+		if (Math.abs(nowDist) < distance / 2)
+			xAxis = xAxis * 0.75; // Multiply to weaken the arc when robot
+										// is near to the aim
 
 		if (Math.abs(nowDist) > Math.abs(avgDist)) {
 			// Moving away from aim distance
 			if (nowDist > avgDist) {
 				// Moving away from aim distance and wall
-				headForPoint(-nowDistance, 200);
+				headForPoint(-xAxis, 200);
 			} else if (nowDist < avgDist) {
 				// Moving to the wall and is between aim distance and wall
-				headForPoint(-nowDistance, 200);
+				headForPoint(-xAxis, 200);
 			}
-		} else if (Math.abs(nowDist) < Math.abs(highDist)) {
+		} else if (Math.abs(nowDist) < Math.abs(avgDist)) {
 			// Moving to the aim distance
 			// Robot is in the right direction -> do nothing
 			if (nowDist > avgDist) {
@@ -117,7 +123,7 @@ public class Umfahren {
 			}
 		} else if (nowDist == avgDist) {
 			// Parallel to the aim
-			headForPoint(-nowDistance, 200);
+			headForPoint(-xAxis, 200);
 		}
 	}
 
