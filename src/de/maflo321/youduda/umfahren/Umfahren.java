@@ -235,7 +235,7 @@ public class Umfahren {
 	 * @return absolute highest offset from the aim distance unsigned
 	 */
 	private float getHighestOffsetUnsigned(int count) {
-		return getHighestOffsetSigned(count);
+		return Math.abs(getHighestOffsetSigned(count));
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class Umfahren {
 		return samples[0] - distance;
 	}
 
-	private float getCurrentSigned() {
+	private float getCurrentDistanceSigned() {
 		float[] samples = sensors.getUltrasonicSamples();
 		if (samples.length <= 0)
 			throw new NegativeArraySizeException("Invalid array size " + samples.length);
