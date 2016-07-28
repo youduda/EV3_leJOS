@@ -158,7 +158,7 @@ public class Umfahren {
 		double x1 = Math.sqrt(Math.pow(r, 2) - Math.pow(y1, 2));
 		double x2 = Math.sqrt(Math.pow(r, 2) - Math.pow(y2, 2));
 
-		if (xAxis < 0) { // Interval: ]-infinite; 0[ and ]r;
+		if (xAxis < 0) { // Interval: ]-infinite; 0[
 			if (yAxis >= r)
 				x = x1;
 			else
@@ -168,10 +168,11 @@ public class Umfahren {
 				x = x2;
 			else if (yAxis < -r)
 				x = -x2;
-		} else if (xAxis > r) {
-
+		} else if (xAxis > r) {// Interval: ]r; infinite[
+			// aim is on the robot's right side => flip arc horizontal at
+			// x=robotLocation=r (xAxis > r)
 			xAxis = xAxis - r;
-			if (xAxis < 0) { // Interval: ]-infinite; 0[ and ]r;
+			if (xAxis < 0) {
 				if (yAxis >= -r)
 					x = -x2;
 				else
