@@ -136,7 +136,7 @@ public class Umfahren {
 	 * @param yAxis
 	 *            y-coordinate of the point, should be much higher than radius
 	 */
-	private void headForPoint(double direction, double xAxis, double yAxis) {
+	private void headForPoint(double xAxis, double yAxis) {
 		double r = 100; // TODO: Check if aim is OUTSIDE of circle
 		xAxis = r + xAxis;
 		double yValue = yAxis;
